@@ -1,3 +1,3 @@
 // PATHS
 export const PATH_CREATE = '/create-rma';
-export const PATH_SEARH = '/search-rma'
+export const PATH_SEARCH = '/search-rma'

@@ -3,11 +3,19 @@ import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import App from '../src/components/App';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { msalConfig } from './authConfig';
+import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
 
 ReactDOM.render(
   <HashRouter>
     <CssBaseline />
-    <App />
+    <MsalProvider instance={msalInstance}>
+      <App />
+    </MsalProvider>
   </HashRouter>,
   document.getElementById('root')
 );
