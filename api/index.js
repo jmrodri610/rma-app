@@ -8,29 +8,12 @@ const { createRMA, retrieveRMA } = require('./logic')
 
 const {argv: [, , port], env: {PORT = port || 8080, DB_URL}} = process;
 
-
+const { user, rma } = require('./routes');
 const api = express();
 api.use(bodyParser.json());
 api.use(cors())
-
-api.post('/create-rma', async (req,res) => {
-    try {
-        await createRMA(req.body)
-        res.status(201).end()
-    } catch (error) {
-        res.status(409).json(error.message)
-    }
-
-})
-
-api.get('/rma', async (req, res) => {
-    try {
-        const rmaList = await retrieveRMA();
-        res.status(200).json(rmaList)
-    } catch (error) {
-        res.status(400).json(error.message)
-    }
-})
+api.use('/rma', rma)
+api.use('/user', user)
 
 database.connect(DB_URL)
 api.listen(PORT, () => console.log(`${name} ${version} up and running on port ${PORT}`))

@@ -1,6 +1,7 @@
 import React from 'react';
 import Landing from '../../pages/Landing';
 import LoginPage from '../../pages/LoginPage';
+import RegisterPage from '../../pages/RegisterPage';
 import { Route, withRouter } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
@@ -43,11 +44,8 @@ const useStyles = makeStyles({
 
 const App = ({ history }) => {
 
-  const { instance, accounts } = useMsal();
 
   const classes = useStyles();
-
-  const isAuthenticated = useIsAuthenticated();
 
   const handleGoToCreateRMA = () => history.push(PATH_CREATE)
 
@@ -56,45 +54,18 @@ const App = ({ history }) => {
   const handleNavigateToSearch = () => history.push(PATH_SEARCH)
 
   const handleLogout = () => {
-      instance.logoutPopup({
-        postLogoutRedirectUri: "/",
-        mainWindowRedirectUri: "/"
-      });
+
   }
-
-  const MainContent = () => {
-    return (
-      <div className="App">
-        <AuthenticatedTemplate>
-          <Route exact path="/" render={() => <Landing onCreateRMA={handleGoToCreateRMA} />} />
-          <Route path="/create-rma" render={() => <CreateRMA />} />
-        </AuthenticatedTemplate>
-
-        <UnauthenticatedTemplate>
-          <LoginPage />
-        </UnauthenticatedTemplate>
-      </div>
-    );
-  };
+  
+  {/* <Grid className={classes.logoContainer}>
+    <img src={logo} alt="Assa abloy global solutions" />
+  
+    
+  </Grid> */}
 
   return (
     <Grid className={classes.mainContainer}>
-      <Box boxShadow={3} m={1} p={1} className={classes.box}>
-
-        <Grid className={classes.logoContainer}>
-          <img src={logo} alt="Assa abloy global solutions" />
-          {isAuthenticated && <div className={classes.navigationIcons}>
-            <h3>Welcome {accounts[0].name} </h3>
-            <HomeIcon className={classes.icon} onClick={handleNavigateToHome} />
-            <SearchIcon className={classes.icon} onClick={handleNavigateToSearch} />
-            <ExitToAppIcon className={classes.icon} onClick={handleLogout} />
-          </div>}
-          
-        </Grid>
-        
-
-        <MainContent />
-      </Box >
+      <RegisterPage />
     </Grid >
   )
 }
