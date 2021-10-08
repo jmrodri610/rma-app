@@ -1,73 +1,72 @@
-import React from 'react';
-import Landing from '../../pages/Landing';
-import LoginPage from '../../pages/LoginPage';
-import RegisterPage from '../../pages/RegisterPage';
-import { Route, withRouter } from 'react-router-dom';
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import logo from '../../../src/assets/logo/logo.png';
-import { PATH_CREATE, PATH_SEARCH } from '../../constants';
-import CreateRMA from '../CreateRMA';
-import SearchIcon from '@material-ui/icons/Search';
-import HomeIcon from '@material-ui/icons/Home';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { useIsAuthenticated, AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
+import React, { useContext } from "react";
+import Landing from "../../pages/Landing";
+import LoginPage from "../../pages/LoginPage";
+import RegisterPage from "../../pages/RegisterPage";
+import { Route, Switch, withRouter } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import {
+  PATH_HOME,
+  PATH_LOGIN,
+  PATH_REGISTER,
+} from "../../constants";
+// import CreateRMA from "../CreateRMA";
+// import SearchIcon from "@material-ui/icons/Search";
+// import HomeIcon from "@material-ui/icons/Home";
+// import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { AuthContext } from "../../context/AuthContext";
 
 const useStyles = makeStyles({
   mainContainer: {
-    height: '100vh',
+    height: "100vh",
+    backgroundColor: "#b5babf57",
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#b5babf57'
+    flexDirection: 'column',
+    justifyContent: 'center'
   },
-  logoContainer: {
-    margin: '1.25rem',
-    width: '90%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  box: {
-    height: '90vh',
-    width: '85vw',
-    borderRadius: '0.5rem',
-    backgroundColor: '#fafafa',
-  },
-  icon: {
-    color: '#4cb4d3',
-    margin: '0.25rem',
-    cursor: 'pointer',
-  }
-})
+  
+});
 
 const App = ({ history }) => {
-
-
   const classes = useStyles();
+  const authContext = useContext(AuthContext);
 
-  const handleGoToCreateRMA = () => history.push(PATH_CREATE)
+  const handleGoToHome = () => history.push("/");
 
-  const handleNavigateToHome = () => history.push('/')
+  // const handleGoToCreateRMA = () => history.push(PATH_CREATE);
 
-  const handleNavigateToSearch = () => history.push(PATH_SEARCH)
+  // const handleNavigateToHome = () => history.push("/");
 
-  const handleLogout = () => {
+  // const handleNavigateToSearch = () => history.push(PATH_SEARCH);
 
-  }
-  
-  {/* <Grid className={classes.logoContainer}>
-    <img src={logo} alt="Assa abloy global solutions" />
-  
-    
-  </Grid> */}
+  // const handleLogout = () => {};
 
   return (
     <Grid className={classes.mainContainer}>
-      <RegisterPage />
-    </Grid >
-  )
-}
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={() =>
+            authContext.isAuthenticated() ? handleGoToHome() : <LoginPage />
+          }
+        />
+        <Route
+          path={PATH_HOME}
+          render={() =>
+            authContext.isAuthenticated() ? <Landing /> : <LoginPage />
+          }
+        />
+        <Route
+          path={PATH_LOGIN}
+          render={() =>
+            authContext.isAuthenticated() ? handleGoToHome() : <LoginPage />
+          }
+        />
+        <Route path={PATH_REGISTER} render={() => <RegisterPage />} />
+      </Switch>
+    </Grid>
+  );
+};
 
 export default withRouter(App);

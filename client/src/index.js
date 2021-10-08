@@ -1,15 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter } from 'react-router-dom';
-import App from '../src/components/App';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from "react";
+import ReactDOM from "react-dom";
+import { HashRouter } from "react-router-dom";
+import App from "../src/components/App";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { AuthProvider } from "./context/AuthContext";
 
 ReactDOM.render(
   <HashRouter>
-    <CssBaseline />
-      <App />
+      <CssBaseline />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
   </HashRouter>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,39 +1,147 @@
-import React from 'react';
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import * as React from "react";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import PersistentDrawerLeft from "../../components/PersistentDrawerLeft";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import IconButton from "@mui/material/IconButton";
 
-const useStyles = makeStyles({
+const columns = [
+  { id: "ID", label: "Id", minWidth: 170 },
+  { id: "created", label: "Fecha de creación", minWidth: 100 },
+  {
+    id: "createdBy",
+    label: "Creado por",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "hotel",
+    label: "Hotel",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "status",
+    label: "Estado",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toFixed(2),
+  },
+  {
+    id: "doc",
+    label: "Documento",
+    minWidth: 170,
+    align: "center",
+    format: (value) => value.toFixed(2),
+  },
+];
 
-    rmaBox: {
-        backgroundColor: '#b0c4de',
-        margin: '0 auto',
-        marginTop: '2.5rem',
-        borderRadius: '0.5rem',
-        padding: '2.5rem',
-        width: '20rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    button: {
-        width: '10rem',
-        margin: '0.25rem',
-    }
-})
-
-
-const Landing = ({ onCreateRMA, onSearchRMA }) => {
-    const classes = useStyles();
-
-    return (
-        <Box boxShadow={3} m={1} p={1} className={classes.rmaBox}>
-            <Typography variant="h6">RMA Generator</Typography>
-            <Button variant="contained" color="primary" className={classes.button} onClick={onCreateRMA}>Create RMA</Button>
-            <Button variant="contained" color="primary" className={classes.button} onClick={onSearchRMA}>Search RMA</Button>
-        </Box>
-    )
+function createData(ID, created, createdBy, hotel, status, doc) {
+  return { ID, created, createdBy, hotel, status, doc };
 }
 
-export default Landing
+const rows = [
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+  createData("RMA-01234", "01-01-2021", 'Miriam Manzano', 'Ibis','Activo', <IconButton><PictureAsPdfIcon /></IconButton>),
+];
+
+export default function StickyHeadTable() {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  return (
+    <PersistentDrawerLeft title="Lista de RMA">
+      <Paper sx={{ width: "100%", overflow: "hidden"}}>
+        <TableContainer sx={{ maxHeight: 650 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.code}
+                    >
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === "number"
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </PersistentDrawerLeft>
+  );
+}
