@@ -16,13 +16,13 @@ router.post('/register', async (req, res)=> {
     }
 })
 
-router.post('/authenticate', tokenVerifier, async (req, res)=> {
+router.post('/authenticate', async (req, res)=> {
     const { username, password } = req.body
     try {
-        const id = await authenticateUser(username, password)
+        const { id, initials } = await authenticateUser(username, password)
         const token = jwt.sign({ sub: id }, SECRET, { expiresIn: '1d' })
 
-        res.json( {token} )
+        res.json( { token, initials } )
     } catch (error) {
         res.status(409).json(error.message)
     }

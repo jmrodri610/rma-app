@@ -16,6 +16,10 @@ module.exports = function (username, password) {
 
         await user.save()
 
-        return user.id
+        const initials = user.name[0].toUpperCase() + user.surname[0]?.toUpperCase()
+
+        const id = user.id
+
+        return { id, initials }
     })()
 }

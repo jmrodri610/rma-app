@@ -62,13 +62,14 @@ const LoginPage = ({ history }) => {
     Swal.showLoading();
     try {
       const {
-        data: { token },
+        data: { token, initials },
       } = await userApiService.post("/authenticate", {
         username,
         password,
       });
 
       authContext.setToken(token);
+      authContext.setInitials(initials);
 
       Swal.fire("Login successful", `Welcome, ${username}!`, "success").then(
         () => history.push(PATH_HOME)

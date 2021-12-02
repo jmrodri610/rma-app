@@ -1,95 +1,130 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import SearchIcon from '@mui/icons-material/Search';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import MenuIcon from '@mui/material/Menu'
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import logo from "../../../src/assets/logo/logo.png";
+import * as React from "react";
+import { withRouter } from "react-router";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@material-ui/core/Avatar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import SearchIcon from "@mui/icons-material/Search";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import MenuIcon from "@mui/material/Menu";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import {
+  PATH_CREATE,
+  PATH_HOME,
+  PATH_LIST,
+  PATH_LOGIN,
+  PATH_SEARCH,
+  PATH_PROFILE,
+  LOGO_BLUE,
+} from "../../constants";
+
+import { AuthContext } from "../../context/AuthContext";
 
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
-  const { window, children, title } = props
+  const { children, title } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const authContext = React.useContext(AuthContext);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const getIcon = {
-    0: <ListAltIcon />,
-    1: <SearchIcon />,
-    2: <NoteAddIcon />
-  }
+    0: <HomeOutlinedIcon />,
+    1: <ListAltIcon />,
+    2: <SearchIcon />,
+    3: <NoteAddIcon />,
+    4: <PersonOutlineIcon />,
+    5: <MeetingRoomIcon />,
+  };
+
+  const handleMenuAction = (index) => {
+    const paths = {
+      0: PATH_HOME,
+      1: PATH_LIST,
+      2: PATH_SEARCH,
+      3: PATH_CREATE,
+      4: PATH_PROFILE,
+    };
+
+    if (index === 5) {
+      authContext.logout();
+      props.history.push(PATH_LOGIN);
+    } else props.history.push(paths[index]);
+  };
 
   const drawer = (
     <div>
-      <img src={logo} alt="Assa abloy global solutions" />
-      <Toolbar />
-      <Divider />
+      <div
+        style={{
+          height: "30%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <img
+          src={LOGO_BLUE}
+          alt="Assa abloy global solutions"
+          style={{ height: "-webkit-fill-available" }}
+        />
+      </div>
       <List>
-        {['Lista de RMA', 'Buscar RMA', 'Crear RMA'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {getIcon[index]}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['Mi Perfil', 'Cerrar sesión'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index === 0 ? <PersonOutlineIcon /> : <MeetingRoomIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        {["Home", "List", "Search", "Create", "Profile", "Logout"].map(
+          (text, index) => (
+            <ListItem button key={text} onClick={() => handleMenuAction(index)}>
+              <ListItemIcon>{getIcon[index]}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItem>
+          )
+        )}
       </List>
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
-
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
-        color="primary"
+        style={{ backgroundColor: "#00a7d1" }}
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
             color="secondary"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             {title}
           </Typography>
+          <Avatar
+            style={{ backgroundColor: "#FF5722", cursor: "pointer" }}
+            onClick={() => props.history.push(PATH_PROFILE)}
+          >
+            {authContext.getInitials()}
+          </Avatar>
         </Toolbar>
       </AppBar>
       <Box
@@ -98,25 +133,13 @@ function ResponsiveDrawer(props) {
         aria-label="mailbox folders"
       >
         <Drawer
-          container={container}
-          variant="persistent"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
           open
         >
@@ -124,12 +147,10 @@ function ResponsiveDrawer(props) {
         </Drawer>
       </Box>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
         {children}
       </Box>
     </Box>
   );
 }
 
-
-export default ResponsiveDrawer;
+export default withRouter(ResponsiveDrawer);

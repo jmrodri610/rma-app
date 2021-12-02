@@ -14,16 +14,35 @@ const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     return token;
   };
+
   const setToken = (token) => {
     localStorage.setItem("token", token);
   };
 
-  const logout = ()=> {
-      localStorage.removeItem('token')
-  }
+  const setInitials = (initials) => {
+    localStorage.setItem("initials", initials);
+  };
+
+  const getInitials = () => {
+    return localStorage.getItem("initials");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("initials");
+    localStorage.removeItem("token");
+  };
 
   return (
-    <Provider value={{ getToken, setToken, logout, isAuthenticated }}>
+    <Provider
+      value={{
+        getToken,
+        setToken,
+        logout,
+        isAuthenticated,
+        setInitials,
+        getInitials,
+      }}
+    >
       {children}
     </Provider>
   );
