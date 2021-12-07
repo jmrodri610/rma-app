@@ -41,7 +41,6 @@ const CreateRMA = ({ onCloseModal }) => {
   const [postalCode, setPostalCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-  const [issueDate, setIssueDate] = useState();
   const [isUnderWarranty, setIsUnderwarranty] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [purchaseDate, setPurchaseDate] = useState();
@@ -61,10 +60,6 @@ const CreateRMA = ({ onCloseModal }) => {
 
   const disableCreateRMA = () => {
     return (
-      !!issueDate &&
-      isUnderWarranty &&
-      !!invoiceNumber &&
-      !!purchaseDate &&
       !!description
     );
   };
@@ -79,7 +74,6 @@ const CreateRMA = ({ onCloseModal }) => {
       postalCode,
       phoneNumber,
       email,
-      issueDate,
       isUnderWarranty,
       invoiceNumber,
       purchaseDate,
@@ -153,12 +147,6 @@ const CreateRMA = ({ onCloseModal }) => {
         {step === 2 && (
           <>
             <CustomLabeledInput label="ID" disabled value={rmaId} />
-            <CustomLabeledInput
-              label="Issue date"
-              type="date"
-              value={issueDate}
-              setValue={setIssueDate}
-            />
             <CustomLabeledInput
               label="Under warranty"
               type="checkbox"

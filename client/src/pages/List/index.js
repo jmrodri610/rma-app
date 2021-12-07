@@ -19,6 +19,8 @@ import Create from "../../components/Create";
 import { AuthContext } from "../../context/AuthContext";
 import rmaApiService from "../../api/rmaApiService";
 import { format as formatDate } from "date-fns";
+import { PATH_ITEM } from "../../constants";
+import { withRouter } from "react-router";
 
 const columns = [
   { id: "rmaId", label: "Id", minWidth: 170 },
@@ -31,32 +33,37 @@ const columns = [
     id: "technitian",
     label: "Created by",
     minWidth: 170,
-    align: "right",
+    align: "left",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
     id: "hotel",
     label: "Hotel",
     minWidth: 170,
-    align: "right",
+    align: "left",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
     id: "status",
     label: "Status",
-    minWidth: 170,
-    align: "right",
+    minWidth: 100,
+    align: "left",
   },
-  // {
-  //   id: "doc",
-  //   label: "Document",
-  //   minWidth: 170,
-  //   align: "center",
-  //   format: (value) => value.toFixed(2),
-  // },
+  {
+    id: "isUnderWarranty",
+    label: "Warranty",
+    minWidth: 80,
+    align: "left",
+  },
+  {
+    id: "doc",
+    label: "Document",
+    minWidth: 80,
+    align: "center",
+  },
 ];
 
-export default function List() {
+function List({ history }) {
   const authContext = useContext(AuthContext);
 
   const [rows, setRows] = useState([]);
@@ -71,16 +78,21 @@ export default function List() {
   const retrieveRMAList = async () => {
     const token = authContext.getToken();
     try {
-      const { data } = await rmaApiService.get("/retrieve", {
+      const { data } = await rmaApiService.get("/retrieve-list", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-     data.forEach( item => {
-       const date = formatDate(new Date(item.created), 'PPP')
-       item.created = date;
-     })
+      data.forEach((item) => {
+        const date = formatDate(new Date(item.created), "PPP");
+        item.created = date;
+        item.doc = (
+          <IconButton>
+            <PictureAsPdfIcon />
+          </IconButton>
+        );
+      });
 
       setRows(data);
     } catch (error) {}
@@ -97,7 +109,7 @@ export default function List() {
 
   return (
     <PersistentDrawerLeft title="RMA Manager Tool for business">
-      <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: "1rem" }}>
+      <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: "1rem", marginTop: 10 }}>
         <Grid
           style={{
             marginTop: "1rem",
@@ -150,9 +162,11 @@ export default function List() {
                   return (
                     <TableRow
                       hover
+                      style={{cursor: 'pointer'}}
                       role="checkbox"
                       tabIndex={-1}
                       key={row.code}
+                      onClick={()=> history.push(`${PATH_ITEM}/${row.id}`)}
                     >
                       {columns.map((column) => {
                         const value = row[column.id];
@@ -160,7 +174,7 @@ export default function List() {
                           <TableCell key={column.id} align={column.align}>
                             {column.format && typeof value === "number"
                               ? column.format(value)
-                              : value}
+                              : typeof value === "boolean" ? value === true ? 'YES' : 'NO' : value}
                           </TableCell>
                         );
                       })}
@@ -184,3 +198,5 @@ export default function List() {
     </PersistentDrawerLeft>
   );
 }
+
+export default withRouter(List);

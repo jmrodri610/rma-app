@@ -5,10 +5,6 @@ module.exports = new Schema ({
         type: String,
         required: true
     },
-    issueDate: {
-        type: Date,
-        required: true
-    },
     hotel: {
         type: String,
         required: true
@@ -39,7 +35,6 @@ module.exports = new Schema ({
     },
     purchaseDate: {
         type: Date,
-        required: true,
     },
     email: {
         type: String

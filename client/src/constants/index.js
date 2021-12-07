@@ -2,9 +2,8 @@
 export const PATH_HOME = '/home';
 export const PATH_LOGIN = '/login';
 export const PATH_REGISTER = '/register';
-export const PATH_CREATE = '/create-rma';
-export const PATH_SEARCH = '/search-rma';
 export const PATH_LIST = '/list-rma';
+export const PATH_ITEM = '/rma';
 export const PATH_PROFILE = '/profile';
 
 /**

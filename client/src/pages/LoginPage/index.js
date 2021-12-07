@@ -15,6 +15,13 @@ import Swal from "sweetalert2";
 import userApiService from "../../api/userApiService";
 
 const useStyles = makeStyles({
+  mainContainer: {
+    display: 'flex',
+    backgroundColor: "#b5babf57",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100vh'
+  },
   rmaBox: {
     backgroundColor: "#ffffff",
     margin: "0 auto",
@@ -82,7 +89,7 @@ const LoginPage = ({ history }) => {
   const handleGoToRegister = () => history.push(PATH_REGISTER);
 
   return (
-    <Grid>
+    <Grid className={classes.mainContainer}>
       <Box boxShadow={3} m={1} p={1} className={classes.rmaBox}>
         <Grid className={classes.logoContainer}>
           <img src={logo} alt="Assa abloy global solutions" />

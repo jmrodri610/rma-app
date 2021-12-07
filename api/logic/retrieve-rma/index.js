@@ -1,19 +1,23 @@
-const { models: { RMA } } = require('data');
+const {
+  models: { RMA },
+} = require("data");
+const {
+  validate,
+  errors: { ContentError },
+} = require("utils");
 
-module.exports = function retrieveRMA() {
+module.exports = function retrieveRMA(id) {
+  validate.string(id, "id");
 
-    return (async ()=> {
+  return (async () => {
+    const rma = await RMA.findById(id).lean();
 
-        const rmaList = await RMA.find().lean();
+    if (!rma) throw new ContentError("invalid document");
 
-        if (!rmaList) return []
+    rma.id = rma._id;
+    delete rma._id;
+    delete rma.__v;
 
-        rmaList.forEach(rma => {
-            delete rma._id
-            delete rma.__v
-        })
-
-
-        return rmaList
-    })()
-}
+    return rma;
+  })();
+};
