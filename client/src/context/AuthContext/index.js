@@ -6,7 +6,7 @@ const { Provider } = AuthContext;
 const AuthProvider = ({ children }) => {
   const isAuthenticated = () => {
     const token = localStorage.getItem("token");
-
+    console.log(!!token)
     return !!token;
   };
 

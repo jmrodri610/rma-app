@@ -14,7 +14,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-
+import PersistentDrawerLeft from "../../components/PersistentDrawerLeft";
 import Create from "../../components/Create";
 
 const columns = [
@@ -88,7 +88,7 @@ export default function List() {
   };
 
   return (
-    <>
+    <PersistentDrawerLeft title="RMA Manager Tool for business">
       <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: "1rem" }}>
         <Grid
           style={{
@@ -172,7 +172,7 @@ export default function List() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {openModal && <Create onCloseModal={()=> setOpenModal(false)}/>}
-    </>
+      {openModal && <Create onCloseModal={() => setOpenModal(false)} />}
+    </PersistentDrawerLeft>
   );
 }

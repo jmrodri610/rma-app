@@ -70,7 +70,6 @@ function ResponsiveDrawer(props) {
     <div>
       <div
         style={{
-          height: "30%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

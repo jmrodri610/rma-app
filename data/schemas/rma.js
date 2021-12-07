@@ -1,53 +1,53 @@
 const { Schema } = require('mongoose')
 
 module.exports = new Schema ({
-    date: {
+    technitian: {
+        type: String,
+        required: true
+    },
+    issueDate: {
         type: Date,
         required: true
     },
-    companyName: {
+    hotel: {
         type: String,
         required: true
     },
-    siteName: {
+    customer: {
         type: String,
         required: true,
+    },
+    adress: {
+        type: String,
+        required: true,
+    },
+    postalCode: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true
     },
     rmaId: {
         type: String,
         required: true,
     },
-    cif: {
-        type: String,
-        required: true,
-    },
-    product: {
-        type: String,
-        required: true,
-    },
-    issue: {
-        type: String,
-        required: true
-    },
-    technitian: {
-        type: String,
-        required: true
-    },
-    hasContract: {
+    isUnderWarranty: {
         type: Boolean,
         required: true,
     },
-    contractType: {
+    purchaseDate: {
         type: String,
-        enum: ['Basico', 'Basico Plus', 'Hotline']
+        required: true,
     },
-    order: {
+    email: {
         type: String
     },
-    orderDate: {
+    phoneNumber: {
         type: Date
     },
-    issueResolution: {
+    invoiceNumber: {
         type: String
     },
     status: {

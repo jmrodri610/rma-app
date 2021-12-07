@@ -1,4 +1,10 @@
-import { TextField, Typography, Grid, InputAdornment } from "@material-ui/core";
+import {
+  TextField,
+  Typography,
+  Grid,
+  Checkbox,
+  InputAdornment,
+} from "@material-ui/core";
 import CloseIcon from "@mui/icons-material/Close";
 import { makeStyles } from "@material-ui/core";
 import React from "react";
@@ -6,7 +12,7 @@ import React from "react";
 const useStyles = makeStyles({
   inputContainer: {
     display: "flex",
-    alignItems: "flex-end",
+    alignItems: "center",
     padding: 16,
   },
   label: {
@@ -37,7 +43,16 @@ const useStyles = makeStyles({
   },
 });
 
-const CustomLabeledInput = ({ label, disabled, rows, type = "text" }) => {
+const CustomLabeledInput = ({
+  label,
+  disabled,
+  rows,
+  value,
+  setValue,
+  isRequired = false,
+  multiline = false,
+  type = "text",
+}) => {
   const classes = useStyles();
 
   return (
@@ -45,16 +60,33 @@ const CustomLabeledInput = ({ label, disabled, rows, type = "text" }) => {
       <Grid className={classes.label}>
         <Typography>{label}</Typography>
       </Grid>
-      <Grid className={classes.input}>
-        {/* InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <CloseIcon />
-                </InputAdornment>
-              ),
-            }} */}
-        <TextField disabled={disabled} type={type} rows={rows} variant="standard" size="small" />
-      </Grid>
+      {type === "checkbox" ? (
+        <Checkbox
+          checked={value}
+          onChange={(event) => setValue(event.target.checked)}
+        />
+      ) : (
+        <Grid className={classes.input}>
+          <TextField
+            disabled={disabled}
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+            type={type}
+            multiline={multiline}
+            rows={rows}
+            variant="standard"
+            size="small"
+            required={isRequired}
+            // InputProps={{
+            //   endAdornment: (
+            //     <InputAdornment position="end">
+            //       <CloseIcon />
+            //     </InputAdornment>
+            //   ),
+            // }}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 };
