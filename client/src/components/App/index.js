@@ -1,16 +1,14 @@
 import React, { useContext } from "react";
-// import Landing from "../../pages/Landing";
+import Landing from "../../pages/Landing";
 import LoginPage from "../../pages/LoginPage";
 import RegisterPage from "../../pages/RegisterPage";
 import PersistentDrawerLeft from "../../components/PersistentDrawerLeft";
 import List from "../../pages/List";
 import NotFoundPage from "../../pages/NotFoundPage";
-// import CreateRMA from "../../pages/Create";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import {
-  // PATH_CREATE,
   PATH_HOME,
   PATH_LIST,
   PATH_LOGIN,
@@ -38,7 +36,11 @@ const App = ({ history }) => {
         <Route
           path={PATH_LOGIN}
           render={() =>
-            !authContext.isAuthenticated() ? <LoginPage /> : history.push(PATH_HOME)
+            !authContext.isAuthenticated() ? (
+              <LoginPage />
+            ) : (
+              history.push(PATH_HOME)
+            )
           }
         />
         <Route
@@ -63,7 +65,11 @@ const App = ({ history }) => {
         <Route
           path={PATH_HOME}
           render={() =>
-            authContext.isAuthenticated() ? <List /> : history.push(PATH_LOGIN)
+            authContext.isAuthenticated() ? (
+              <Landing />
+            ) : (
+              history.push(PATH_LOGIN)
+            )
           }
         />
         <Route
@@ -72,15 +78,6 @@ const App = ({ history }) => {
             authContext.isAuthenticated() ? <List /> : history.push(PATH_LOGIN)
           }
         />
-        {/* <Route
-              path={PATH_CREATE}
-              render={() =>
-                authContext.isAuthenticated() ? (
-                  <CreateRMA />
-                  ) : (
-                    Redirect(PATH_LOGIN)
-                    )
-                  } */}
         <Route path="*" render={() => <NotFoundPage />} />
       </Switch>
     </Grid>

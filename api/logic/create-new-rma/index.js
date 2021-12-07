@@ -17,6 +17,7 @@ module.exports = function createRMA(rma) {
     purchaseDate,
     description,
     rmaId,
+    created
   } = rma;
 
   return (async () => {
@@ -38,6 +39,7 @@ module.exports = function createRMA(rma) {
       purchaseDate,
       description,
       rmaId,
+      created
     });
   })();
 };

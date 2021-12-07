@@ -38,14 +38,14 @@ module.exports = new Schema ({
         required: true,
     },
     purchaseDate: {
-        type: String,
+        type: Date,
         required: true,
     },
     email: {
         type: String
     },
     phoneNumber: {
-        type: Date
+        type: String
     },
     invoiceNumber: {
         type: String
@@ -54,9 +54,11 @@ module.exports = new Schema ({
         type: String,
         enum: ['Pending', 'Solved'],
         default: 'Pending'
+    },
+    created: {
+        type: Date,
+        required: true
     }
-
-
 })
 
 

@@ -19,10 +19,10 @@ router.post('/register', async (req, res)=> {
 router.post('/authenticate', async (req, res)=> {
     const { username, password } = req.body
     try {
-        const { id, initials } = await authenticateUser(username, password)
+        const { id, initials, tech } = await authenticateUser(username, password)
         const token = jwt.sign({ sub: id }, SECRET, { expiresIn: '1d' })
 
-        res.json( { token, initials } )
+        res.json( { token, initials, tech } )
     } catch (error) {
         res.status(409).json(error.message)
     }

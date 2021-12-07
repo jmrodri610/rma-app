@@ -45,22 +45,18 @@ function ResponsiveDrawer(props) {
   const getIcon = {
     0: <HomeOutlinedIcon />,
     1: <ListAltIcon />,
-    2: <SearchIcon />,
-    3: <NoteAddIcon />,
-    4: <PersonOutlineIcon />,
-    5: <MeetingRoomIcon />,
+    2: <PersonOutlineIcon />,
+    3: <MeetingRoomIcon />,
   };
 
   const handleMenuAction = (index) => {
     const paths = {
       0: PATH_HOME,
       1: PATH_LIST,
-      2: PATH_SEARCH,
-      3: PATH_CREATE,
-      4: PATH_PROFILE,
+      2: PATH_PROFILE,
     };
 
-    if (index === 5) {
+    if (index === 3) {
       authContext.logout();
       props.history.push(PATH_LOGIN);
     } else props.history.push(paths[index]);
@@ -82,7 +78,7 @@ function ResponsiveDrawer(props) {
         />
       </div>
       <List>
-        {["Home", "List", "Search", "Create", "Profile", "Logout"].map(
+        {["Home", "List", "Profile", "Logout"].map(
           (text, index) => (
             <ListItem button key={text} onClick={() => handleMenuAction(index)}>
               <ListItemIcon>{getIcon[index]}</ListItemIcon>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -16,13 +16,20 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import PersistentDrawerLeft from "../../components/PersistentDrawerLeft";
 import Create from "../../components/Create";
+import { AuthContext } from "../../context/AuthContext";
+import rmaApiService from "../../api/rmaApiService";
+import { format as formatDate } from "date-fns";
 
 const columns = [
-  { id: "ID", label: "Id", minWidth: 170 },
-  { id: "created", label: "Fecha de creación", minWidth: 100 },
+  { id: "rmaId", label: "Id", minWidth: 170 },
   {
-    id: "createdBy",
-    label: "Creado por",
+    id: "created",
+    label: "Created on",
+    minWidth: 100,
+  },
+  {
+    id: "technitian",
+    label: "Created by",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
@@ -36,47 +43,48 @@ const columns = [
   },
   {
     id: "status",
-    label: "Estado",
+    label: "Status",
     minWidth: 170,
     align: "right",
-    format: (value) => value.toFixed(2),
   },
-  {
-    id: "doc",
-    label: "Documento",
-    minWidth: 170,
-    align: "center",
-    format: (value) => value.toFixed(2),
-  },
+  // {
+  //   id: "doc",
+  //   label: "Document",
+  //   minWidth: 170,
+  //   align: "center",
+  //   format: (value) => value.toFixed(2),
+  // },
 ];
 
-function createData(ID, created, createdBy, hotel, status, doc) {
-  return { ID, created, createdBy, hotel, status, doc };
-}
-
-const rows = [];
-
-(() => {
-  for (let i = 1; i <= 35; i++) {
-    rows.push(
-      createData(
-        `RMA-${i}`,
-        "01-01-2021",
-        "Miriam Manzano",
-        "Ibis",
-        "Activo",
-        <IconButton>
-          <PictureAsPdfIcon />
-        </IconButton>
-      )
-    );
-  }
-})();
-
 export default function List() {
+  const authContext = useContext(AuthContext);
+
+  const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openModal, setOpenModal] = useState(false);
+
+  useEffect(() => {
+    retrieveRMAList();
+  }, [openModal]);
+
+  const retrieveRMAList = async () => {
+    const token = authContext.getToken();
+    try {
+      const { data } = await rmaApiService.get("/retrieve", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+     data.forEach( item => {
+       const date = formatDate(new Date(item.created), 'PPP')
+       item.created = date;
+     })
+
+      setRows(data);
+    } catch (error) {}
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

@@ -8,11 +8,8 @@ import { Divider, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomLabeledInput from "../CustomLabeledInput";
 import StepLine from "../StepLine";
-import Swal from "sweetalert2";
-import userApiService from "../../api/userApiService";
 import rmaApiService from "../../api/rmaApiService";
 import { AuthContext } from "../../context/AuthContext";
-import { PATH_LIST } from "../../constants";
 
 const useStyles = makeStyles({
   mainContainer: {
@@ -36,7 +33,7 @@ const useStyles = makeStyles({
 const CreateRMA = ({ onCloseModal }) => {
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  const [technitian, setTechnitian] = useState("");
+  const [technitian] = useState(authContext.getTechnitian());
   const [rmaId] = useState(`RMA-${randomBytes(2).toString("hex")}`);
   const [hotel, setHotel] = useState("");
   const [customer, setCustomer] = useState("");
@@ -44,30 +41,12 @@ const CreateRMA = ({ onCloseModal }) => {
   const [postalCode, setPostalCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-  const [issueDate, setIssueDate] = useState(new Date());
+  const [issueDate, setIssueDate] = useState();
   const [isUnderWarranty, setIsUnderwarranty] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState(new Date());
+  const [purchaseDate, setPurchaseDate] = useState();
   const [description, setDescription] = useState("");
   const [step, setStep] = useState(1);
-
-  useEffect(() => {
-    return (async () => {
-      try {
-        const token = authContext.getToken();
-        const {
-          data: { name, surname },
-        } = await userApiService.get("/retrieve-user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setTechnitian(`${name} ${surname}`);
-      } catch (error) {
-        Swal.fire("Oops", "something went wrong", "error");
-      }
-    })();
-  }, []);
 
   const enableStep2 = () => {
     return (
@@ -91,12 +70,7 @@ const CreateRMA = ({ onCloseModal }) => {
   };
 
   const createNewRMA = async () => {
-    new Swal({
-      title: "Wait a moment, please...",
-      allowedOutsideClick: false,
-    });
 
-    Swal.showLoading();
     const rma = {
       technitian,
       hotel,
@@ -105,12 +79,13 @@ const CreateRMA = ({ onCloseModal }) => {
       postalCode,
       phoneNumber,
       email,
-      issueDate: new Date(issueDate),
+      issueDate,
       isUnderWarranty,
       invoiceNumber,
-      purchaseDate: new Date(purchaseDate),
+      purchaseDate,
       description,
       rmaId,
+      created: new Date()
     };
 
     try {
@@ -120,11 +95,11 @@ const CreateRMA = ({ onCloseModal }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      Swal.fire("RMA created successfully", "", "success").then(() =>
-        onCloseModal()
-      );
+
+      onCloseModal()
+
     } catch (error) {
-      Swal.fire("Oops", "something went wrong", "error");
+      
     }
   };
 

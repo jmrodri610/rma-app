@@ -6,7 +6,6 @@ const { Provider } = AuthContext;
 const AuthProvider = ({ children }) => {
   const isAuthenticated = () => {
     const token = localStorage.getItem("token");
-    console.log(!!token)
     return !!token;
   };
 
@@ -26,6 +25,13 @@ const AuthProvider = ({ children }) => {
   const getInitials = () => {
     return localStorage.getItem("initials");
   };
+  const setTechnitian = (tech) => {
+    localStorage.setItem("technitian", tech);
+  };
+
+  const getTechnitian = () => {
+    return localStorage.getItem("technitian");
+  };
 
   const logout = () => {
     localStorage.removeItem("initials");
@@ -41,6 +47,8 @@ const AuthProvider = ({ children }) => {
         isAuthenticated,
         setInitials,
         getInitials,
+        setTechnitian,
+        getTechnitian
       }}
     >
       {children}
