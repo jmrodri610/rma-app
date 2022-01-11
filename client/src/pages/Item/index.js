@@ -1,19 +1,58 @@
 import React, { useState, useEffect, useContext } from "react";
 import PersistentDrawerLeft from "../../components/PersistentDrawerLeft";
-import { makeStyles } from '@material-ui/core'
-import { CircularProgress, Grid, Typography, TextField } from "@material-ui/core";
+import Element from "./Element";
+import { makeStyles } from "@material-ui/core";
+import {
+  CircularProgress,
+  Grid,
+  Typography,
+  TextField,
+} from "@material-ui/core";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Paper from "@mui/material/Paper";
 import { AuthContext } from "../../context/AuthContext";
 import rmaApiService from "../../api/rmaApiService";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { Button } from "@mui/material";
 
 const useStyles = makeStyles({
-    title: {}
-})
+  customerInfoInputs: {
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  customerInfo: {
+    padding: "10px",
+    border: "dotted 1px #00a7d1",
+    borderRadius: "8px",
+    backgroundColor: "#b5babf57",
+  },
+  editIcon: {
+    color: "#00a7d1",
+    marginLeft: "20px",
+    cursor: "pointer",
+  },
+  saveButton: {
+    width: '5rem',
+    height: '2rem',
+    cursor: 'pointer'
+  },
+  saveText: {
+    fontWeight: 'bold',
+  }
+});
 
 const Item = ({ id }) => {
   const authContext = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [rma, setRMA] = useState({});
+  const [editInput, setEditInput] = useState(false);
+  const [rmaId, setRmaId] = useState();
+  const [personalInfo, setPersonalInfo] = useState({});
+  const [rmaInfo, setRmaInfo] = useState({});
+  const [editingElement, setEditingElement] = useState();
+  const [editedInput, setEditedInput] = useState({});
 
   const classes = useStyles();
 
@@ -24,18 +63,38 @@ const Item = ({ id }) => {
   const retrieveRMA = async () => {
     const token = authContext.getToken();
     try {
-      const { data } = await rmaApiService.get(`/retrieve-rma/${id}`, {
+      const {
+        data: { rmaId, personalInfo, rmaInfo },
+      } = await rmaApiService.get(`/retrieve-rma/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setRMA(data);
+      setRmaId(rmaId);
+      setEditedInput(personalInfo);
+      setPersonalInfo(personalInfo);
+      setRmaInfo(rmaInfo);
+
       setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleSetEdit = (edit, index) => {
+    setEditInput(edit);
+    setEditingElement(index);
+  };
+
+  const handleSaveInfo = (edit, index, editedValue) => {
+    setEditedInput({ ...editedInput, [index]: editedValue });
+    setEditInput(edit);
+    setEditingElement(index);
+  };
+
+  const isEdited = JSON.stringify(personalInfo) !== JSON.stringify(editedInput)
+
   return (
     <PersistentDrawerLeft title="RMA Manager Tool for business">
       {!isLoading && (
@@ -45,44 +104,33 @@ const Item = ({ id }) => {
             padding: "1rem",
             overflow: "hidden",
             borderRadius: "1rem",
-            marginTop: 10
+            marginTop: 10,
           }}
         >
-          <h1>Details</h1>
-          <Grid style={{ display: "flex", justifyContent: "space-between" }}>
-            <Grid style={{ display: "flex", flexDirection: "column" }}>
-              <TextField>Hotel: {rma.hotel}</TextField>
-              <p>Customer name: {rma.customer}</p>
-              <p>Adress: {rma.adress}</p>
-              <p>Postal code: {rma.postalCode}</p>
-              <p>Phone number: {rma.phoneNumber}</p>
-              <p>e-mail: {rma.email}</p>
+          <Grid style={{ display: "flex", width: '30%', alignItems: 'center', justifyContent: 'space-around', marginBottom: '0.5rem' }}>
+            <h1>{rmaId}</h1>
+            <Button disabled={!isEdited} className={classes.saveButton} variant="contained" color="success">
+              <Typography variant="body2" className={classes.saveText}>Save</Typography>
+            </Button>
+          </Grid>
+          <Grid container justifyContent="space-around">
+            <Grid item xs={3} className={classes.customerInfo}>
+              <Typography variant="h6">Contact Information</Typography>
+              {Object.entries(personalInfo).map(([key, value]) => {
+                return (
+                  <Element
+                    editInput={editInput}
+                    value={value}
+                    label={key}
+                    handleSetEdit={handleSetEdit}
+                    handleSaveInfo={handleSaveInfo}
+                    editingElement={editingElement}
+                    editable
+                  />
+                );
+              })}
             </Grid>
-            <Grid style={{ display: "flex", flexDirection: "column" }}>
-              <Grid style={{ display: "flex" }}>
-                <p style={{ margin: "0 0.5rem 0 0.5rem" }}>{rma.rmaId}</p>
-                <p style={{ margin: "0 0.5rem 0 0.5rem" }}>
-                  Opened by: {rma.technitian}
-                </p>
-                <p style={{ margin: "0 0.5rem 0 0.5rem" }}>
-                  Issue date: {rma.created}
-                </p>
-              </Grid>
-              <Grid>
-                <Grid style={{ display: "flex" }}>
-                  <p style={{ margin: "0 0.5rem 0 0.5rem" }}>Purchase info</p>
-                  <p style={{ margin: "0 0.5rem 0 0.5rem" }}>
-                    Purchase date: {rma.purchaseDate}
-                  </p>
-                  <p style={{ margin: "0 0.5rem 0 0.5rem" }}>
-                    Invoice: {rma.invoiceNumber}
-                  </p>
-                </Grid>
-                <Grid>
-                    <p>{rma.description}</p>
-                </Grid>
-              </Grid>
-            </Grid>
+            <Grid item xs={8} className={classes.customerInfo}></Grid>
           </Grid>
         </Paper>
       )}
