@@ -1,37 +1,27 @@
 import React, { useContext } from "react";
-import Landing from "../../pages/Landing";
 import LoginPage from "../../pages/LoginPage";
 import RegisterPage from "../../pages/RegisterPage";
 import Item from "../../pages/Item";
 import List from "../../pages/List";
 import NotFoundPage from "../../pages/NotFoundPage";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import CustomAppBar from "../CustomAppBar";
 import {
   PATH_HOME,
   PATH_LIST,
   PATH_ITEM,
   PATH_LOGIN,
   PATH_REGISTER,
+  PATH_CREATE,
 } from "../../constants";
 import { AuthContext } from "../../context/AuthContext";
 
-const useStyles = makeStyles({
-  mainContainer: {
-    height: "100vh",
-    backgroundColor: "#b5babf57",
-    // display: "flex",
-    // flexDirection: "column",
-    // justifyContent: "center",
-  },
-});
-
 const App = ({ history }) => {
-  const classes = useStyles();
   const authContext = useContext(AuthContext);
 
   return (
+    <>
+      <CustomAppBar title="RMA Manager Tool for business" />
       <Switch>
         <Route
           path={PATH_LOGIN}
@@ -39,7 +29,7 @@ const App = ({ history }) => {
             !authContext.isAuthenticated() ? (
               <LoginPage />
             ) : (
-              history.push(PATH_HOME)
+              history.push(PATH_LIST)
             )
           }
         />
@@ -47,7 +37,7 @@ const App = ({ history }) => {
           path={PATH_REGISTER}
           render={() =>
             authContext.isAuthenticated() ? (
-              history.push(PATH_HOME)
+              history.push(PATH_LIST)
             ) : (
               <RegisterPage />
             )
@@ -58,18 +48,20 @@ const App = ({ history }) => {
           path="/"
           render={() =>
             authContext.isAuthenticated()
-              ? history.push(PATH_HOME)
+              ? history.push(PATH_LIST)
               : history.push(PATH_LOGIN)
           }
         />
         <Route
           path={PATH_HOME}
           render={() =>
-            authContext.isAuthenticated() ? (
-              <Landing />
-            ) : (
-              history.push(PATH_LOGIN)
-            )
+            authContext.isAuthenticated() ? <List /> : history.push(PATH_LOGIN)
+          }
+        />
+        <Route
+          path={PATH_CREATE}
+          render={() =>
+            authContext.isAuthenticated() ? <Item /> : history.push(PATH_LOGIN)
           }
         />
         <Route
@@ -81,11 +73,16 @@ const App = ({ history }) => {
         <Route
           path={`${PATH_ITEM}/:rmaId`}
           render={(props) =>
-            authContext.isAuthenticated() ? <Item id={props.match.params.rmaId}/> : history.push(PATH_LOGIN)
+            authContext.isAuthenticated() ? (
+              <Item id={props.match.params.rmaId} />
+            ) : (
+              history.push(PATH_LOGIN)
+            )
           }
         />
         <Route path="*" render={() => <NotFoundPage />} />
       </Switch>
+    </>
   );
 };
 

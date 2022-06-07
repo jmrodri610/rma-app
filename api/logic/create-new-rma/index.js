@@ -7,16 +7,19 @@ module.exports = function createRMA(rma) {
     technitian,
     hotel,
     customer,
-    adress,
+    address,
     postalCode,
     phoneNumber,
     email,
     isUnderWarranty,
-    invoiceNumber,
     purchaseDate,
     description,
     rmaId,
-    created
+    createdDate,
+    received = null,
+    process = null,
+    sent = null,
+    solution = null,
   } = rma;
 
   return (async () => {
@@ -28,16 +31,19 @@ module.exports = function createRMA(rma) {
       technitian,
       hotel,
       customer,
-      adress,
+      address,
       postalCode,
       phoneNumber,
       email,
       isUnderWarranty,
-      invoiceNumber,
       purchaseDate,
       description,
       rmaId,
-      created
+      createdDate,
+      received,
+      process,
+      sent,
+      solution,
     });
   })();
 };

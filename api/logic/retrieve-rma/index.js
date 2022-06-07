@@ -18,40 +18,6 @@ module.exports = function retrieveRMA(id) {
     delete rma._id;
     delete rma.__v;
 
-    const {
-      customer,
-      hotel,
-      adress,
-      phoneNumber,
-      postalCode,
-      email,
-      created,
-      description,
-      invoiceNumber,
-      isUnderWarranty,
-      status,
-      technitian,
-      rmaId
-    } = rma;
-
-
-    const personalInfo = {
-      customer,
-      hotel,
-      adress,
-      phoneNumber,
-      postalCode,
-      email,
-    };
-    const rmaInfo = {
-      created,
-      description,
-      invoiceNumber,
-      isUnderWarranty,
-      status,
-      technitian,
-    };
-
-    return { rmaId, personalInfo, rmaInfo };
+    return rma;
   })();
 };
