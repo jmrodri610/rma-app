@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 import { makeStyles } from "@material-ui/core";
 import {
   CircularProgress,
@@ -10,6 +11,7 @@ import { randomBytes } from "crypto";
 import DatePicker from "@mui/lab/DatePicker";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import deLocale from "date-fns/locale/de";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import Paper from "@mui/material/Paper";
 import { AuthContext } from "../../context/AuthContext";
@@ -20,16 +22,11 @@ import { withRouter } from "react-router";
 import { PATH_LIST } from "../../constants";
 
 const useStyles = makeStyles({
-  customerInfoInputs: {
-    display: "flex",
-    width: "100%",
-    alignItems: "center",
-    marginTop: 8,
-  },
   input: {
     background: "#DFECF2",
     borderRadius: "0.2rem",
     border: "solid 1px gray",
+    fontSize: "1rem",
   },
   customerInfo: {
     padding: "10px",
@@ -73,6 +70,11 @@ const Item = ({ history, id, location }) => {
   const [sent, setSent] = useState();
   const [received, setReceived] = useState();
   const [process, setProcess] = useState();
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   const classes = useStyles();
 
@@ -196,7 +198,10 @@ const Item = ({ history, id, location }) => {
             <Typography variant="subtitle1">
               {statusOptions[_status].date}
             </Typography>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              locale={deLocale}
+            >
               <DatePicker
                 value={statusOptions[_status].value}
                 renderInput={(params) => (
@@ -236,24 +241,272 @@ const Item = ({ history, id, location }) => {
       technitian,
       rmaId,
     };
-
-    if (isEdit) {
-      console.log("edit");
-    } else {
-      try {
-        const token = authContext.getToken();
-        await rmaApiService.post("/create", rma, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        history.push(PATH_LIST);
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      const token = authContext.getToken();
+      const endpoint = isEdit ? "/update" : "/create";
+      await rmaApiService.post(endpoint, rma, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      history.push(PATH_LIST);
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  const DocumentEditor = React.forwardRef((_, ref) => {
+    return (
+      <Grid ref={ref}>
+        <h1 style={{ padding: "10px" }}>{rmaId}</h1>
+        <Grid className={classes.customerInfo}>
+          <Typography variant="h5" style={{ marginBottom: "1rem" }}>
+            Contact Information
+          </Typography>
+          <Grid container style={{ marginBottom: "0.5rem" }}>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+                marginRight: "1rem",
+              }}
+            >
+              <Typography variant="subtitle1">Contact person</Typography>
+              <TextField
+                className={classes.input}
+                value={customer}
+                size="small"
+                variant="outlined"
+                onChange={(event) => setCustomer(event.target.value)}
+              />
+            </Grid>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "25rem",
+                marginRight: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Email Address</Typography>
+              <TextField
+                className={classes.input}
+                value={email}
+                size="small"
+                variant="outlined"
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </Grid>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+              }}
+            >
+              <Typography variant="subtitle1">Phone number</Typography>
+              <TextField
+                className={classes.input}
+                style={{ width: "10rem" }}
+                value={phoneNumber}
+                size="small"
+                variant="outlined"
+                onChange={(event) => setPhoneNumber(event.target.value)}
+              />
+            </Grid>
+          </Grid>
+          <Grid
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "20rem",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <Typography variant="subtitle1">Hotel</Typography>
+            <TextField
+              className={classes.input}
+              value={hotel}
+              size="small"
+              variant="outlined"
+              onChange={(event) => setHotel(event.target.value)}
+            />
+          </Grid>
+          <Grid container style={{ marginBottom: "1rem" }}>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+                marginRight: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Address</Typography>
+              <TextField
+                className={classes.input}
+                value={address}
+                size="small"
+                variant="outlined"
+                onChange={(event) => setAddress(event.target.value)}
+              />
+            </Grid>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+              }}
+            >
+              <Typography variant="subtitle1">Postal code</Typography>
+              <TextField
+                className={classes.input}
+                value={postalCode}
+                size="small"
+                variant="outlined"
+                onChange={(event) => setPostalCode(event.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid className={classes.customerInfo}>
+          <Typography
+            variant="h5"
+            style={{
+              marginBottom: "0.5rem",
+            }}
+          >
+            RMA Details
+          </Typography>
+
+          <Grid container>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+                marginRight: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Created by</Typography>
+              <TextField
+                className={classes.input}
+                value={technitian}
+                size="small"
+                variant="filled"
+                disabled
+              />
+            </Grid>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "10rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <Typography variant="subtitle1">Create date</Typography>
+              <LocalizationProvider
+                dateAdapter={AdapterDateFns}
+                locale={deLocale}
+              >
+                <DatePicker
+                  value={createdDate}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className={classes.input}
+                      style={{ padding: "0.5rem" }}
+                    />
+                  )}
+                  onChange={(newValue) => setCreatedDate(newValue)}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Has warranty</Typography>
+              <Checkbox
+                checked={isUnderWarranty}
+                onChange={() => setIsUnderWarranty((prev) => !prev)}
+              />
+            </Grid>
+          </Grid>
+
+          <Grid container style={{ marginBottom: "1rem" }}>
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "20rem",
+                marginRight: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Status</Typography>
+              <Select
+                value={status}
+                className={classes.input}
+                onChange={(event) => setStatus(event.target.value)}
+              >
+                <MenuItem value="Pending reception">Pending reception</MenuItem>
+                <MenuItem value="Received">Received</MenuItem>
+                <MenuItem value="In process">In process</MenuItem>
+                <MenuItem value="Sent">Sent</MenuItem>
+              </Select>
+            </Grid>
+            {getStatusUpdateDatePicker(status)}
+          </Grid>
+
+          <Grid
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginRight: "3rem",
+            }}
+          >
+            <Typography variant="subtitle1">Description</Typography>
+            <TextField
+              className={classes.input}
+              value={description}
+              size="small"
+              variant="filled"
+              multiline
+              minRows={4}
+              fullWidth
+              onChange={(event) => setDescription(event.target.value)}
+            />
+          </Grid>
+          {isEdit && (
+            <Grid
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginRight: "3rem",
+              }}
+            >
+              <Typography variant="subtitle1">Solution</Typography>
+              <TextField
+                className={classes.input}
+                value={solution}
+                size="small"
+                variant="filled"
+                multiline
+                minRows={4}
+                fullWidth
+                onChange={(event) => setSolution(event.target.value)}
+              />
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
+    );
+  });
+
   const ableToSave =
     !!customer &&
     !!email &&
@@ -287,262 +540,32 @@ const Item = ({ history, id, location }) => {
             >
               <h1>
                 {isEdit ? "Edit " : "New "}
-                {rmaId}
+                Document
               </h1>
-              <Button
-                variant="contained"
-                color="warning"
-                endIcon={<SaveRoundedIcon />}
-                style={{ height: "fit-content", marginRight: "5rem" }}
-                onClick={() => saveDocument()}
-                disabled={!ableToSave}
-              >
-                Save document
-              </Button>
+              <Grid>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  endIcon={<SaveRoundedIcon />}
+                  style={{ height: "fit-content", marginRight: "5rem" }}
+                  onClick={handlePrint}
+                >
+                  Print
+                </Button>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  endIcon={<SaveRoundedIcon />}
+                  style={{ height: "fit-content", marginRight: "5rem" }}
+                  onClick={() => saveDocument()}
+                  disabled={!ableToSave}
+                >
+                  Save document
+                </Button>
+              </Grid>
             </Grid>
             <Grid>
-              <Grid className={classes.customerInfo}>
-                <Typography variant="h5" style={{ marginBottom: "1rem" }}>
-                  Contact Information
-                </Typography>
-                <Grid container style={{ marginBottom: "1rem" }}>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                      marginRight: "1rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Contact person</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={customer}
-                      size="small"
-                      variant="filled"
-                      onChange={(event) => setCustomer(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                      marginRight: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Email Address</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={email}
-                      size="small"
-                      variant="filled"
-                      onChange={(event) => setEmail(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Phone number</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={phoneNumber}
-                      size="small"
-                      variant="filled"
-                      onChange={(event) => setPhoneNumber(event.target.value)}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "25rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <Typography variant="subtitle1">Hotel</Typography>
-                  <TextField
-                    className={classes.input}
-                    value={hotel}
-                    size="small"
-                    variant="filled"
-                    onChange={(event) => setHotel(event.target.value)}
-                  />
-                </Grid>
-                <Grid container style={{ marginBottom: "1rem" }}>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                      marginRight: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Address</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={address}
-                      size="small"
-                      variant="filled"
-                      onChange={(event) => setAddress(event.target.value)}
-                    />
-                  </Grid>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Postal code</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={postalCode}
-                      size="small"
-                      variant="filled"
-                      onChange={(event) => setPostalCode(event.target.value)}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid className={classes.customerInfo}>
-                <Typography
-                  variant="h5"
-                  style={{
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  RMA Details
-                </Typography>
-
-                <Grid container>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                      marginRight: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Created by</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={technitian}
-                      size="small"
-                      variant="filled"
-                      disabled
-                    />
-                  </Grid>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "10rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Create date</Typography>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DatePicker
-                        value={createdDate}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            className={classes.input}
-                            style={{ padding: "0.5rem" }}
-                          />
-                        )}
-                        onChange={(newValue) => setCreatedDate(newValue)}
-                      />
-                    </LocalizationProvider>
-                  </Grid>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginLeft: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Has warranty</Typography>
-                    <Checkbox
-                      checked={isUnderWarranty}
-                      onChange={() => setIsUnderWarranty((prev) => !prev)}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container style={{ marginBottom: "1rem" }}>
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "25rem",
-                      marginRight: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Status</Typography>
-                    <Select
-                      value={status}
-                      className={classes.input}
-                      onChange={(event) => setStatus(event.target.value)}
-                    >
-                      <MenuItem value="Pending reception">
-                        Pending reception
-                      </MenuItem>
-                      <MenuItem value="Received">Received</MenuItem>
-                      <MenuItem value="In process">In process</MenuItem>
-                      <MenuItem value="Sent">Sent</MenuItem>
-                    </Select>
-                  </Grid>
-                  {getStatusUpdateDatePicker(status)}
-                </Grid>
-
-                <Grid
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginRight: "3rem",
-                  }}
-                >
-                  <Typography variant="subtitle1">Description</Typography>
-                  <TextField
-                    className={classes.input}
-                    value={description}
-                    size="small"
-                    variant="filled"
-                    multiline
-                    minRows={4}
-                    fullWidth
-                    onChange={(event) => setDescription(event.target.value)}
-                  />
-                </Grid>
-                {isEdit && (
-                  <Grid
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginRight: "3rem",
-                    }}
-                  >
-                    <Typography variant="subtitle1">Solution</Typography>
-                    <TextField
-                      className={classes.input}
-                      value={solution}
-                      size="small"
-                      variant="filled"
-                      multiline
-                      minRows={4}
-                      fullWidth
-                      onChange={(event) => setSolution(event.target.value)}
-                    />
-                  </Grid>
-                )}
-              </Grid>
+              <DocumentEditor ref={componentRef} />
             </Grid>
           </Grid>
         </Paper>

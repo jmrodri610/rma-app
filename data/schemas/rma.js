@@ -36,9 +36,6 @@ module.exports = new Schema({
     type: Boolean,
     required: true,
   },
-  purchaseDate: {
-    type: Date,
-  },
   email: {
     type: String,
   },
